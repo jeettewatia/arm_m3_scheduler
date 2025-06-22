@@ -9,7 +9,7 @@
 vector_table:
     .word 0x20001000
     .word reset_handler
-.org 0x3c
+.org 0x3c // 15
     .word systick_handler
     .zero 400
 
@@ -36,9 +36,111 @@ reset_handler:
     .align 1
     .type systick_handler, %function
 systick_handler:
-    add r5, r5, #1
-rukk_jao_yaha:
+    push {r4-r7}
+
+    mov r0, r8
+    mov r1, r9
+    mov r2, r10
+    mov r3, r11
+
+    push {r0-r3}
+
+magic:
+    // change in stack pointer
+    pop {r0-r3}
+
+    mov r8, r0
+    mov r9, r1
+    mov r10, r2
+    mov r11, r3
+
+    pop {r4-r7}
+
     bx lr // link register
 
+// Tasks
+    .section .text
+    .p2align    4
+    .global main1
+    .type main1, %function
+main1:
+    nop
+    add r0, r0, #1
+    b main1
 
-//Users/piyush/Movies/obs/ARM-M - Baremetal Assembly/3. Assembly Programs/3.1 Booting the Processor and First Assembly Program/map.ld
+    .section .text
+    .p2align    4
+    .global main2
+    .type main2, %function
+main2:
+    nop
+    add r1, r1, #2
+    b main2
+
+    .section .text
+    .p2align    4
+    .global main3
+    .type main3, %function
+main3:
+    nop
+    add r2, r2, #3
+    b main3
+
+    .data
+    .align 4
+stack_1:
+    .word 0x18
+    .word 0x19
+    .word 0x1a
+    .word 0x1b
+    .word 0x14
+    .word 0x15
+    .word 0x16
+    .word 0x17
+    .word 0x10
+    .word 0x11
+    .word 0x12
+    .word 0x13
+    .word 0x1c
+    .word 0x309
+    .word main1
+    .word 0x01000000
+    .zero 64
+    .align 4
+stack_2:
+    .word 0x28
+    .word 0x29
+    .word 0x2a
+    .word 0x2b
+    .word 0x24
+    .word 0x25
+    .word 0x26
+    .word 0x27
+    .word 0x20
+    .word 0x21
+    .word 0x22
+    .word 0x23
+    .word 0x2c
+    .word 0x309
+    .word main2
+    .word 0x01000000
+    .zero 64
+    .align 4
+stack_3:
+    .word 0x38
+    .word 0x39
+    .word 0x3a
+    .word 0x3b
+    .word 0x34
+    .word 0x35
+    .word 0x36
+    .word 0x37
+    .word 0x30
+    .word 0x31
+    .word 0x32
+    .word 0x33
+    .word 0x3c
+    .word 0x309
+    .word main3
+    .word 0x01000000
+    .zero 100
